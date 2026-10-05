@@ -2,7 +2,7 @@ const COLORS = ['#b7a7e8','#9dbda7','#e9a6a6','#92bed6','#e9cf84','#d59c7d'];
 const $ = (s) => document.querySelector(s);
 const cfg = window.APP_CONFIG || {};
 const configured = cfg.SUPABASE_URL && cfg.SUPABASE_PUBLISHABLE_KEY && !cfg.SUPABASE_URL.startsWith('PASTE_') && !cfg.SUPABASE_PUBLISHABLE_KEY.startsWith('PASTE_');
-let client=null, sessionToken=null, me=null, state=null, rotation=0, busy=false, pendingAction=null, pollTimer=null, selectedProfile='María', profileNeedsSetup=null;
+let client=null, sessionToken=null, me=null, state=null, rotation=0, busy=false, pendingAction=null, pollTimer=null, selectedProfile='Majo', profileNeedsSetup=null;
 if(configured){client=window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:false}})}else{$('#authError').textContent='Falta conectar Supabase en config.js.';$('#loginBtn').disabled=true}
 function escapeHtml(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 function when(ts){return new Date(ts).toLocaleString('es-ES',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}
