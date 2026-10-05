@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Entre páginas · Ruleta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#20212a; --muted:#777986; --paper:#f7f4ef; --card:#fffdf9; --line:#e7e0d7;
+      --lav:#b7a7e8; --sage:#9dbda7; --rose:#e9a6a6; --sky:#92bed6; --butter:#e9cf84; --clay:#d59c7d;
+      --shadow:0 18px 45px rgba(47,41,34,.09);
+    }
+    *{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;min-height:100vh}
+    button,input{font:inherit}.app{max-width:1240px;margin:auto;padding:28px 28px 54px}
+    header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:26px}
+    .brand h1{font-family:'DM Serif Display',serif;font-size:clamp(34px,5vw,54px);font-weight:400;letter-spacing:-.02em;margin:0}
+    .brand p{margin:6px 0 0;color:var(--muted);font-size:14px}
+    .turn{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 16px;box-shadow:var(--shadow);min-width:190px}
+    .eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:10px;font-weight:700;color:var(--muted)}
+    .turn-name{font-family:'DM Serif Display',serif;font-size:24px;margin-top:2px}
+    .grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);gap:22px}
+    .panel{background:var(--card);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow)}
+    .wheel-panel{padding:26px;min-height:680px;display:flex;flex-direction:column}
+    .topline{display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .count{font-size:13px;color:var(--muted)}
+    .wheel-wrap{position:relative;display:grid;place-items:center;flex:1;min-height:430px;padding:20px}
+    #wheel{width:min(520px,84vw);height:min(520px,84vw);max-height:520px;filter:drop-shadow(0 22px 28px rgba(40,36,30,.12));transition:transform 4.8s cubic-bezier(.15,.7,.11,1)}
+    .pointer{position:absolute;top:32px;width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:30px solid var(--ink);filter:drop-shadow(0 4px 3px rgba(0,0,0,.12));z-index:4}
+    .spin-btn{position:absolute;width:124px;height:124px;border-radius:50%;border:10px solid var(--card);background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:700;letter-spacing:.08em;cursor:pointer;box-shadow:0 10px 25px rgba(33,33,42,.18);z-index:3;transition:.2s transform,.2s opacity}
+    .spin-btn:hover:not(:disabled){transform:scale(1.03)} .spin-btn:disabled{opacity:.42;cursor:not-allowed}
+    .result{border-top:1px solid var(--line);padding-top:18px;display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;min-height:92px}
+    .result-num{width:44px;height:44px;border-radius:14px;background:#eee8ff;display:grid;place-items:center;font-weight:700}
+    .result h3{margin:0 0 4px;font-family:'DM Serif Display',serif;font-weight:400;font-size:23px}.result p{margin:0;color:var(--muted);line-height:1.45;font-size:14px}
+    .side{display:flex;flex-direction:column;gap:22px}.side .panel{padding:22px}
+    .section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.section-title h2{font-family:'DM Serif Display',serif;font-weight:400;margin:0;font-size:25px}
+    .jokers{display:grid;gap:10px}.joker{width:100%;border:1px solid var(--line);background:#fff;border-radius:16px;padding:14px;text-align:left;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;transition:.18s transform,.18s opacity,.18s background}
+    .joker:hover:not(:disabled){transform:translateY(-1px);background:#fbf8f3}.joker:disabled{opacity:.38;cursor:not-allowed}.joker-icon{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-weight:700}.nope .joker-icon{background:#f9d7d7}.why .joker-icon{background:#efe3b7}.decide .joker-icon{background:#dbe8f5}.joker small{color:var(--muted)}.spent{font-size:11px;font-weight:700;color:var(--muted)}
+    .book-box{position:relative;overflow:hidden}.locked::after{content:'BLOQUEADO';position:absolute;inset:0;background:rgba(247,244,239,.72);backdrop-filter:blur(2px);display:grid;place-items:center;font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--muted);border-radius:28px}.fields{display:grid;gap:11px}.field label{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}.field input{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px 13px;outline:none}.field input:focus{border-color:#aaa0d5;box-shadow:0 0 0 3px rgba(183,167,232,.17)}
+    .save{margin-top:12px;width:100%;border:0;border-radius:13px;padding:13px;background:var(--ink);color:#fff;font-weight:700;cursor:pointer}.save:disabled{opacity:.4;cursor:not-allowed}.hint{font-size:12px;color:var(--muted);line-height:1.45;margin:10px 0 0}
+    .history{margin-top:22px;padding:22px}.history-list{display:grid;gap:0;max-height:290px;overflow:auto}.event{display:grid;grid-template-columns:74px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.event:first-child{border-top:0}.event time{font-size:11px;color:var(--muted)}.event p{margin:0;font-size:13px;line-height:1.4}.event strong{font-weight:700}
+    .modal{position:fixed;inset:0;background:rgba(32,33,42,.25);display:none;place-items:center;padding:20px;z-index:20}.modal.show{display:grid}.modal-card{width:min(460px,100%);background:var(--card);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 30px 80px rgba(20,18,17,.22)}.modal-card h3{font-family:'DM Serif Display';font-size:30px;font-weight:400;margin:0 0 8px}.modal-actions{display:flex;gap:10px;margin-top:18px}.modal-actions button{flex:1;border:1px solid var(--line);border-radius:12px;padding:11px;cursor:pointer}.primary{background:var(--ink);color:#fff;border-color:var(--ink)!important}
+    .status-dot{width:8px;height:8px;border-radius:50%;background:var(--sage);display:inline-block;margin-right:6px}.footer-note{margin-top:10px;text-align:center;color:var(--muted);font-size:11px}
+
+    .auth-screen{position:fixed;inset:0;background:linear-gradient(135deg,#f7f4ef 0%,#f2eefc 48%,#eef5f0 100%);display:grid;place-items:center;padding:24px;z-index:50}.auth-screen.hidden{display:none}.auth-card{width:min(440px,100%);background:rgba(255,253,249,.96);border:1px solid var(--line);border-radius:30px;padding:32px;box-shadow:0 28px 80px rgba(47,41,34,.13)}.auth-card h1{font-family:'DM Serif Display',serif;font-size:44px;font-weight:400;margin:0 0 6px}.auth-card p{color:var(--muted);line-height:1.55}.profile-picks{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}.profile-btn{border:1px solid var(--line);background:#fff;border-radius:15px;padding:13px;font-weight:700;cursor:pointer}.profile-btn.selected{background:var(--ink);color:#fff;border-color:var(--ink)}.auth-fields{display:grid;gap:12px;margin-top:12px}.auth-fields input{width:100%;border:1px solid var(--line);border-radius:14px;padding:13px 14px;background:#fff;outline:none}.auth-fields input:focus{border-color:#aaa0d5;box-shadow:0 0 0 3px rgba(183,167,232,.17)}.auth-btn{border:0;border-radius:14px;padding:13px 16px;background:var(--ink);color:#fff;font-weight:700;cursor:pointer}.auth-error{min-height:20px;margin-top:10px;color:#9f4e4e;font-size:12px}.user-tools{display:flex;gap:8px;align-items:center;margin-top:10px}.ghost-btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 10px;font-size:11px;cursor:pointer;color:var(--muted)}.viewer{font-size:11px;color:var(--muted)}.offline-banner{display:none;margin:0 0 18px;padding:10px 14px;border-radius:14px;background:#fff1d6;border:1px solid #ecd39b;font-size:12px}.offline-banner.show{display:block}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}.wheel-panel{min-height:620px}.side{display:grid;grid-template-columns:1fr 1fr}.history{grid-column:1/-1}}
+    @media(max-width:650px){.app{padding:18px 14px 40px}header{align-items:stretch;flex-direction:column}.turn{width:100%}.side{display:flex}.wheel-panel{padding:18px;min-height:550px}.wheel-wrap{min-height:370px}.spin-btn{width:100px;height:100px}.pointer{top:24px}}
+  </style>
+</head>
+<body>
+<div class="auth-screen" id="authScreen">
+  <div class="auth-card">
+    <div class="eyebrow">Club de lectura privado</div>
+    <h1>Entre páginas</h1>
+    <p id="authIntro">Elige tu perfil. La primera vez crearás tu PIN privado; después solo tendrás que introducirlo.</p>
+    <div class="profile-picks">
+      <button class="profile-btn selected" data-name="María">María</button>
+      <button class="profile-btn" data-name="Profe">Profe</button>
+    </div>
+    <div class="auth-fields">
+      <input id="authPin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="PIN (mínimo 6 caracteres)">
+      <input id="authPinConfirm" type="password" inputmode="numeric" autocomplete="new-password" placeholder="Confirmar PIN" style="display:none">
+      <button class="auth-btn" id="loginBtn">Entrar</button>
+    </div>
+    <div id="authModeNote" style="margin-top:10px;font-size:12px;color:var(--muted);line-height:1.45"></div>
+    <div class="auth-error" id="authError"></div>
+  </div>
+</div>
+
+<div class="app">
+<header>
+  <div class="brand"><h1>Entre páginas</h1><p>Una ruleta para leer sin volverlo tarea.</p></div>
+  <div class="turn"><div class="eyebrow">Turno actual</div><div class="turn-name" id="turnName">—</div><div style="font-size:12px;color:var(--muted)"><span class="status-dot"></span><span id="turnStatus">cargando…</span></div><div class="user-tools"><span class="viewer" id="viewerName"></span><button class="ghost-btn" id="logoutBtn">Salir</button></div></div>
+</header>
+
+<div class="offline-banner" id="offlineBanner">No pude actualizar el estado. Mantengo la última vista y volveré a intentarlo automáticamente.</div>
+<div class="grid">
+  <section class="panel wheel-panel">
+    <div class="topline"><div><div class="eyebrow">Ruleta</div><strong id="roundLabel">Ronda 1</strong></div><div class="count" id="remainingLabel">30 prompts disponibles</div></div>
+    <div class="wheel-wrap">
+      <div class="pointer"></div>
+      <svg id="wheel" viewBox="0 0 600 600" aria-label="Ruleta de prompts"></svg>
+      <button class="spin-btn" id="spinBtn">GIRAR</button>
+    </div>
+    <div class="result" id="resultBox">
+      <div class="result-num" id="resultNum">—</div>
+      <div><h3 id="resultTitle">Todavía no hay prompt</h3><p id="resultText">Cuando gires, el resultado quedará registrado y ese prompt saldrá de la ruleta.</p></div>
+    </div>
+  </section>
+
+  <aside class="side">
+    <section class="panel">
+      <div class="section-title"><h2>Comodines</h2><span class="eyebrow" id="jokerOwner">de María</span></div>
+      <div class="jokers">
+        <button class="joker nope" id="nopeBtn"><span class="joker-icon">↻</span><span><strong>NOPE</strong><br><small>Descarta el prompt actual y vuelve a girar.</small></span><span class="spent" id="nopeState">1×</span></button>
+        <button class="joker why" id="whyBtn"><span class="joker-icon">★</span><span><strong>PORQUE QUIERO</strong><br><small>Ignora la ruleta y escribe el libro directamente.</small></span><span class="spent" id="whyState">1×</span></button>
+        <button class="joker decide" id="decideBtn"><span class="joker-icon">→</span><span><strong>TÚ DECIDES</strong><br><small>Cede inmediatamente el turno.</small></span><span class="spent" id="decideState">1×</span></button>
+      </div>
+    </section>
+
+    <section class="panel book-box locked" id="bookBox">
+      <div class="section-title"><h2>Libro elegido</h2><span class="eyebrow" id="bookMode">bloqueado</span></div>
+      <div class="fields">
+        <div class="field"><label for="bookTitle">Título</label><input id="bookTitle" autocomplete="off" placeholder="Nombre del libro"></div>
+        <div class="field"><label for="bookAuthor">Autor/a</label><input id="bookAuthor" autocomplete="off" placeholder="Nombre del autor o autora"></div>
+      </div>
+      <button class="save" id="saveBook">Guardar y cerrar turno</button>
+      <p class="hint">Una vez guardado queda bloqueado. El turno pasa automáticamente a la otra persona.</p>
+    </section>
+  </aside>
+</div>
+
+<section class="panel history">
+  <div class="section-title"><h2>Historial</h2><span class="eyebrow">registro del año</span></div>
+  <div class="history-list" id="historyList"></div>
+</section>
+<div class="footer-note">Estado compartido en Supabase. Dos perfiles privados con PIN; los giros, comodines y libros no se reinician al cambiar de navegador o dispositivo.</div>
+</div>
+
+<div class="modal" id="confirmModal"><div class="modal-card"><div class="eyebrow">Confirmar acción</div><h3 id="modalTitle">¿Girar la ruleta?</h3><p id="modalText" style="color:var(--muted);line-height:1.55"></p><div class="modal-actions"><button id="cancelModal">Cancelar</button><button class="primary" id="confirmAction">Confirmar</button></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="app-online.js"></script>
+</body>
+</html>
